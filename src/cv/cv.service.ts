@@ -15,7 +15,7 @@ export class CvService {
   async createCv(cvData: Partial<Cv>, file?: Express.Multer.File): Promise<Cv> {
     if (file) {
       const uploadResult = await uploadToS3(file);
-      cvData.previewImageUrl = uploadResult.Location; // Save the S3 URL
+      cvData.previewImageUrl = uploadResult.Location;
     }
     const createdCv = new this.cvModel(cvData);
 
@@ -33,7 +33,7 @@ export class CvService {
     const defaultSections = sectionTypes.map((type) => ({
       type,
       resumeId: createdCv._id,
-      content: {}, // Empty content for now
+      content: {},
     }));
 
     await this.sectionModel.insertMany(defaultSections);
@@ -60,7 +60,7 @@ export class CvService {
     if (file) {
       const existingCv = await this.cvModel.findById(id).exec();
       if (existingCv && existingCv.previewImageUrl) {
-        const key = existingCv.previewImageUrl.split('/').pop(); // Extract the key
+        const key = existingCv.previewImageUrl.split('/').pop();
         await deleteFromS3(`ProfileImage/${key}`);
       }
       const uploadResult = await uploadToS3(file);
@@ -72,7 +72,7 @@ export class CvService {
   async deleteCv(id: string): Promise<Cv> {
     const cv = await this.cvModel.findByIdAndDelete(id).exec();
     if (cv && cv.previewImageUrl) {
-      const key = cv.previewImageUrl.split('/').pop(); // Extract the key
+      const key = cv.previewImageUrl.split('/').pop();
       await deleteFromS3(`ProfileImage/${key}`);
     }
     return cv;
