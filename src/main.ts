@@ -26,4 +26,3 @@ async function bootstrap() {
 }
 
 export const handler = bootstrap();
-// Export the handler function for serverless
